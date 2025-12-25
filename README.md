@@ -1,98 +1,139 @@
-### Project Overview: 
-Automated ETL Pipeline for NASA APOD Data Using Apache Airflow
+# Automated ETL Pipeline for NASA APOD Data
 
-This project implements an end-to-end ETL (Extract, Transform, Load) pipeline using Apache Airflow to ingest data from an external API and store it in a PostgreSQL database.
-The pipeline extracts daily astronomy data from NASA APOD API, processes it, and loads it into a relational database for further analysis or visualization.
+**Apache Airflow · PostgreSQL · Docker · Astro Cloud · AWS**
 
-The entire workflow is containerized using Docker, ensuring a reproducible and isolated runtime environment.
+---
 
-🧩 Key Components
-🔹 Workflow Orchestration (Airflow)
+## Overview
 
-Airflow is used to define, schedule, and monitor the ETL process.
+This project implements a production-ready **ETL (Extract, Transform, Load) pipeline** using **Apache Airflow** to ingest data from an external API and store it in a relational database. The pipeline extracts daily astronomy data from the **NASA APOD API**, transforms the response, and loads structured records into **PostgreSQL** for analysis and reporting.
 
-A DAG (Directed Acyclic Graph) manages task dependencies and ensures reliable execution.
+The entire workflow is containerized using Docker, ensuring a reproducible and isolated execution environment. The pipeline is deployable both locally and on cloud platforms such as Astro Cloud and AWS.
 
-The pipeline follows a clear Extract → Transform → Load structure.
+---
 
-🔹 Data Source (NASA APOD API)
+## Architecture
 
-The API provides daily astronomy metadata such as:
+```
+NASA APOD API
+      ↓
+Apache Airflow (DAG)
+      ↓
+Transform (TaskFlow API)
+      ↓
+PostgreSQL Database
+```
 
-Image title
+---
 
-Explanation
+## Tech Stack
 
-Image URL
+* Apache Airflow
+* PostgreSQL
+* Docker & Docker Compose
+* Python
+* Astro Cloud
+* Amazon Web Services (AWS)
 
-Date
+---
 
-Data is fetched using Airflow’s SimpleHttpOperator.
+## ETL Workflow
 
-🔹 Data Storage (PostgreSQL)
+### Extract
 
-A PostgreSQL database stores the processed data.
+* Fetches data from the NASA APOD API using Airflow's `SimpleHttpOperator`
+* Receives structured JSON responses containing astronomy metadata
 
-The database runs inside a Docker container with persistent volumes.
+### Transform
 
-Airflow’s PostgresHook and PostgresOperator are used for database interaction.
+* Processes raw JSON data using Airflow's **TaskFlow API (`@task`)**
+* Extracts and formats relevant fields such as title, explanation, image URL, and date
 
-The target table is automatically created if it does not already exist.
+### Load
 
-🔄 ETL Workflow
-1️⃣ Extract
+* Loads transformed data into PostgreSQL using Airflow's `PostgresHook`
+* Automatically creates the target table if it does not already exist
 
-Data is fetched daily from the NASA APOD API using HTTP requests.
+---
 
-The response is received in JSON format.
+## Project Structure
 
-2️⃣ Transform
+```
+airflow-etl-nasa-apod/
+├── dags/
+│   └── etl.py
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+└── README.md
+```
 
-The raw JSON response is processed using Airflow’s TaskFlow API (@task).
+---
 
-Relevant fields (title, explanation, URL, date) are extracted and formatted to match the database schema.
+## Deployment
 
-3️⃣ Load
+### Local (Docker)
 
-The transformed data is inserted into PostgreSQL.
+* Runs Airflow and PostgreSQL using Docker Compose
+* Suitable for local development and testing
 
-Schema management is handled programmatically within the DAG.
+```bash
+astro dev start
+```
 
-☁️ Deployment
-🔸 Local Deployment
+Access the Airflow UI at:
 
-Airflow and PostgreSQL run as Docker services using Docker Compose.
+```
+http://localhost:8080
+```
 
-Enables easy local development and testing.
+Default credentials: `admin` / `admin`
 
-🔸 Astro Cloud Deployment
+---
 
-The project is deployable on Astronomer Astro Cloud, providing:
+### Astro Cloud
 
-Managed Airflow infrastructure
+* Fully compatible with **Astronomer Astro Cloud**
+* Provides managed Airflow infrastructure, scalability, and centralized monitoring
 
-Scalable execution
+```bash
+astro login
+astro deploy
+```
 
-Centralized monitoring and logging
+---
 
-🔸 AWS Deployment
+### AWS
 
-The pipeline can be deployed on Amazon Web Services, using:
+* Deployable on **Amazon Web Services**
+* Typical setup includes:
 
-EC2 or ECS for Airflow execution
+  * EC2 or ECS for Airflow execution
+  * RDS for PostgreSQL
+  * S3 for logs and backups
 
-RDS for PostgreSQL
+---
 
-S3 for logs and backups
+## Use Cases
 
-Supports production-grade scalability and reliability.
+* Automated daily API data ingestion
+* Analytical dataset creation
+* Learning production-grade Airflow workflows
+* Foundation for scalable data engineering pipelines
 
-🎯 Project Outcomes
+---
 
-Automated, scheduled API data ingestion
+## Future Enhancements
 
-Clean ETL separation using Airflow best practices
+* Data quality validation
+* Incremental loading logic
+* Failure alerting and monitoring
+* Multi-layer data modeling
 
-Containerized, cloud-deployable architecture
+---
 
-Production-ready workflow suitable for real-world data engineering use cases
+## License
+
+This project is intended for educational and portfolio use.
+
+---
